@@ -1,0 +1,133 @@
+﻿@model WebApp.ViewModels.BoardViewModel
+@{
+    ViewBag.Title = "Website Boards";
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+
+}
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+<div class="container-fluid">
+    <div class="animated fadeIn">
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="card">
+                    <div class="card-header">
+                        <h1>Website Board and Cards</h1>
+                        <span>In order to add Web Content, you will need to create a Website.  The Website is the container for all Web Content, Widgets, and Artifacts.</span>
+                    </div>
+                    <div class="card-body">
+                        @using (Html.BeginForm("Manage", "Board", FormMethod.Post, new { id = "BoardForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <label class="col-md-2 control-label">Select Website</label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(model => model.WebsiteId, Model.WebsiteSelectList, 
+                                        new {@class = "form-control", aria_label = "Selected Website", onchange="websiteChangeHandler(this)"})
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:20px">
+                                <label class="col-md-2 control-label">Select Board</label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(model => model.BoardId, Model.BoardSelectList, new {@class = "form-control", aria_label = "Selected Board", onchange= "changeBoardHandler(this, true)" })
+                                    <p style="margin-top:20px"/>
+                                    <button type="button" class="btn btn-sm btn-success" onclick="addBoard()"><span class="fa fa-window-restore"></span> Add Board</button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-success" onclick="addBoardCard()" style="display:none"><span class="fa fa-window-restore"></span> Add Card</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-header">
+                <span class="fa fa-window-restore"></span> Board: @Model.BoardName
+            </div>
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.conainer-fluid -->
+<!-- Board Modal -->
+<div class="modal fade" id="calendarModal" role="dialog" aria-hidden="true">
+    <div id="categoryModalDiv" class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="categoryModalTitle" class="modal-title">Add Card</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="newBoardCardHeader">Header: </label>
+                <input type="text" class="form-control" name="newBoardCardHeader" id="newBoardCardHeader" aria-label="New Board Card Name"/>
+                
+                <label or="newBoardCardBody">Body: </label>
+                <textarea class="form-control" name="newBoardCardBody" id="newBoardCardBody" aria-label="New Board Card Body" rows="5" cols="50"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitAddBoardCard();">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/Scripts/draggable-cards.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+    });
+
+    function submitAddBoardCard() {
+        $.post("/Board/BoardCardAdd",
+            {
+                "calendarId": $("#CalendarId").val(),
+                "eventName": $("#newEntity").val(),
+                "startDate": $("#startDate").val(),
+                "endDate": $("#endDate").val(),
+                "eventUrl": $("#eventUrl").val()
+            },
+            function (data) {
+                var event = new Object();
+                event.title = data.EventName;
+                event.start = data.StartDate;
+                event.end = data.EndDate;
+                event.url = data.EventUrl;
+                $('#calendar').fullCalendar('renderEvent', event, true);
+                $('#calendarModal').modal('hide');
+            },
+            "json");        
+    }
+
+    document.querySelector('#newEntity').addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+        if (key === 13) { 
+            if (mode === 'calendar') {
+                submitAddCalendar();
+            }
+            else {
+                submitAddEvent();
+            }
+
+        }
+    });
+
+</script>
