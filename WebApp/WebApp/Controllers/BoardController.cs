@@ -99,10 +99,29 @@ namespace WebApp.Controllers
             return View("ManageBoard", boardViewModel);
         }
 
-
-        public ActionResult Manage()
+        public JsonResult BoardAdd(int websiteId, string name)
         {
-            throw new NotImplementedException();
+            Board board = new Board();
+            board.WebsiteId = websiteId;
+            board.BoardName = name;
+            board.CreateDate = DateTime.Now.Date;
+
+            // Save Board
+            return Json(board);
         }
+
+        public JsonResult BoardAddCard(int boardId, string cardHeader, string cardBody)
+        {
+            BoardCard boardCard = new BoardCard();
+            boardCard.BoardId = boardId;
+            boardCard.CardHeader = cardHeader;
+            boardCard.CardBody = cardBody;
+            boardCard.CreateDate = DateTime.Now.Date;
+
+            // Save card
+
+            return Json(boardCard);
+        }
+
     }
 }
