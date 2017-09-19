@@ -10,6 +10,8 @@
         <EntityTypeShape EntityType="ContosoAdsModel.Website" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
         <AssociationConnector Association="ContosoAdsModel.FK_Board_Website" ManuallyRouted="false" />
         <AssociationConnector Association="ContosoAdsModel.FK_BoardCard_Board" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ContosoAdsModel.Category" Width="1.5" PointX="0.75" PointY="4.75" />
+        <AssociationConnector Association="ContosoAdsModel.FK_Category_Parent" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

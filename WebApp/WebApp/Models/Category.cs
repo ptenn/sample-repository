@@ -12,19 +12,20 @@ namespace WebApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Website
+    public partial class Category
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Website()
+        public Category()
         {
-            this.Boards = new HashSet<Board>();
+            this.SubCategories = new HashSet<Category>();
         }
     
         public int Id { get; set; }
-        public int OrganizationId { get; set; }
-        public string SiteName { get; set; }
+        public string Name { get; set; }
+        public Nullable<int> ParentCategoryId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Board> Boards { get; set; }
+        public virtual ICollection<Category> SubCategories { get; set; }
+        public virtual Category ParentCategory { get; set; }
     }
 }

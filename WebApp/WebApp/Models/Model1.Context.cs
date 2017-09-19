@@ -28,5 +28,6 @@ namespace WebApp.Models
         public virtual DbSet<Board> Boards { get; set; }
         public virtual DbSet<BoardCard> BoardCards { get; set; }
         public virtual DbSet<Website> Websites { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
     }
 }

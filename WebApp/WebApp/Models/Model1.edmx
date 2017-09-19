@@ -24,6 +24,14 @@
           <Property Name="BoardId" Type="int" Nullable="false" />
           <Property Name="CreateDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="ParentCategoryId" Type="int" />
+        </EntityType>
         <EntityType Name="Website">
           <Key>
             <PropertyRef Name="Id" />
@@ -56,9 +64,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Category_Parent">
+          <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+          <End Role="Category1" Type="Self.Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category1">
+              <PropertyRef Name="ParentCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ContosoAdsModelStoreContainer">
           <EntitySet Name="Board" EntityType="Self.Board" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BoardCard" EntityType="Self.BoardCard" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Website" EntityType="Self.Website" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Board_Website" Association="Self.FK_Board_Website">
             <End Role="Website" EntitySet="Website" />
@@ -67,6 +88,10 @@
           <AssociationSet Name="FK_BoardCard_Board" Association="Self.FK_BoardCard_Board">
             <End Role="Board" EntitySet="Board" />
             <End Role="BoardCard" EntitySet="BoardCard" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Category_Parent" Association="Self.FK_Category_Parent">
+            <End Role="Category" EntitySet="Category" />
+            <End Role="Category1" EntitySet="Category" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -100,7 +125,6 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Boards" Relationship="Self.FK_Board_Website" FromRole="Website" ToRole="Board" />
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="SiteName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -141,7 +165,34 @@
             <End Role="Board" EntitySet="Boards" />
             <End Role="BoardCard" EntitySet="BoardCards" />
           </AssociationSet>
+          <EntitySet Name="Categories" EntityType="ContosoAdsModel.Category" />
+          <AssociationSet Name="FK_Category_Parent" Association="ContosoAdsModel.FK_Category_Parent">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Category1" EntitySet="Categories" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ParentCategoryId" Type="Int32" />
+          <NavigationProperty Name="SubCategories" Relationship="ContosoAdsModel.FK_Category_Parent" FromRole="Category" ToRole="Category1" />
+          <NavigationProperty Name="ParentCategory" Relationship="ContosoAdsModel.FK_Category_Parent" FromRole="Category1" ToRole="Category" />
+        </EntityType>
+        <Association Name="FK_Category_Parent">
+          <End Type="ContosoAdsModel.Category" Role="Category" Multiplicity="0..1" />
+          <End Type="ContosoAdsModel.Category" Role="Category1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category1">
+              <PropertyRef Name="ParentCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -174,6 +225,15 @@
               <MappingFragment StoreEntitySet="Website">
                 <ScalarProperty Name="SiteName" ColumnName="SiteName" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="ContosoAdsModel.Category">
+              <MappingFragment StoreEntitySet="Category">
+                <ScalarProperty Name="ParentCategoryId" ColumnName="ParentCategoryId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
